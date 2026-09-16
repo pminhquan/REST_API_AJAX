@@ -1,0 +1,132 @@
+/* 
+ * Admin & Management Experiences
+ * Data tables, management actions, thumbnails, fact sheets, and administration layout.
+ */
+
+body.admin-layout {
+  min-height: 100vh;
+}
+
+/* Data table columns & cell presentations */
+.table--data .col-actions {
+  width: 12rem;
+}
+
+.cell-id {
+  font-family: var(--font-family-mono);
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.cell-strong {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.cell-truncate {
+  display: block;
+  max-width: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Keyboard users Tab to a truncated cell to unwrap and read the full text */
+.cell-truncate:focus-visible {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  word-break: break-word;
+}
+
+@media (max-width: 640px) {
+  .cell-truncate {
+    max-width: 10rem;
+  }
+}
+
+/* Row actions */
+.table-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: nowrap;
+}
+
+.table-actions .btn {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.8125rem;
+}
+
+/* Inline form inside a table row */
+.form-inline {
+  display: inline;
+  margin: 0 !important;
+}
+
+.form-inline > * {
+  margin: 0;
+}
+
+/* Small square thumbnail used in data table image cells */
+.thumb {
+  display: block;
+  width: 3rem;
+  height: 3rem;
+  object-fit: cover;
+  background-color: var(--bg-app);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+/* Monospaced, semibold price cell */
+.cell-price {
+  font-family: var(--font-family-mono);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+/* Facts list for management view */
+.detail-facts {
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-3);
+  border-top: 1px solid var(--border-color);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.detail-fact {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-color);
+  box-sizing: border-box;
+}
+
+.detail-fact__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.detail-fact__value {
+  font-size: 0.9375rem;
+  color: var(--color-text-primary);
+  text-align: right;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 65%;
+}
+
+.page-header--detail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}

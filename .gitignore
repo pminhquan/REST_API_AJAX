@@ -1,0 +1,27 @@
+﻿# IntelliJ IDEA
+.idea/
+*.iml
+
+# Maven
+target/
+
+# Logs
+*.log
+
+# Windows
+Thumbs.db
+
+# macOS
+.DS_Store
+
+# Antigravity local files
+.antigravity-bridge/
+
+# Codex local reports
+codex-anti-*.md
+
+# Local test / cleanup scripts
+database-test-cleanup.sql
+
+# Tests
+src/test/

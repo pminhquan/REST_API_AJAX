@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemesh>
+    <mapping path="/assets/*" exclude="true"/>
+    <mapping path="/assets/**" exclude="true"/>
+    <mapping path="/uploads/*" exclude="true"/>
+    <mapping path="/uploads/**" exclude="true"/>
+
+    <!-- Auth decorator -->
+    <mapping path="/login" decorator="auth.jsp"/>
+    <mapping path="/login/*" decorator="auth.jsp"/>
+    <mapping path="/register" decorator="auth.jsp"/>
+    <mapping path="/register/*" decorator="auth.jsp"/>
+    <mapping path="/forgot-password" decorator="auth.jsp"/>
+    <mapping path="/forgot-password/*" decorator="auth.jsp"/>
+    <mapping path="/reset-password" decorator="auth.jsp"/>
+    <mapping path="/reset-password/*" decorator="auth.jsp"/>
+    <mapping path="/verify-otp" decorator="auth.jsp"/>
+    <mapping path="/verify-otp/*" decorator="auth.jsp"/>
+
+    <!-- Admin and management routes -->
+    <mapping path="/admin" decorator="admin.jsp"/>
+    <mapping path="/admin/*" decorator="admin.jsp"/>
+    <mapping path="/admin/**" decorator="admin.jsp"/>
+    <mapping path="/categories" decorator="admin.jsp"/>
+    <mapping path="/categories/*" decorator="admin.jsp"/>
+    <mapping path="/categories/**" decorator="admin.jsp"/>
+
+    <!-- Profile decorator -->
+    <mapping path="/profile" decorator="profile.jsp"/>
+    <mapping path="/profile/*" decorator="profile.jsp"/>
+    <mapping path="/profile/**" decorator="profile.jsp"/>
+
+    <!-- Public routes: specific /products/detail must win over /products/** -->
+    <mapping path="/products/detail" decorator="main.jsp"/>
+    <mapping path="/products/detail/*" decorator="main.jsp"/>
+    <mapping path="/products/detail/**" decorator="main.jsp"/>
+    <mapping path="/" decorator="main.jsp"/>
+    <mapping path="/home" decorator="main.jsp"/>
+    <mapping path="/product" decorator="main.jsp"/>
+
+    <!-- Product management routes -->
+    <mapping path="/products" decorator="admin.jsp"/>
+    <mapping path="/products/**" decorator="admin.jsp"/>
+</sitemesh>

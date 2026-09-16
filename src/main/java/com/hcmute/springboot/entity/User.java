@@ -1,0 +1,277 @@
+package com.hcmute.springboot.entity;
+
+import jakarta.persistence.*;
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+
+@Entity
+@Table(
+        name = "users",
+        schema = "dbo"
+)
+@Access(AccessType.FIELD)
+@NamedQueries({
+
+        @NamedQuery(
+                name = "User.findAll",
+                query = "SELECT u FROM User u ORDER BY u.id DESC"
+        ),
+
+        @NamedQuery(
+                name = "User.findByUsername",
+                query = "SELECT u FROM User u WHERE u.username = :username"
+        ),
+
+        @NamedQuery(
+                name = "User.findByEmail",
+                query = "SELECT u FROM User u WHERE u.email = :email"
+        )
+
+})
+public class User implements Serializable {
+
+
+    private static final long serialVersionUID = 1L;
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(
+            name = "Id",
+            nullable = false
+    )
+    private int id;
+
+
+
+    @Column(
+            name = "Username",
+            nullable = false,
+            unique = true,
+            length = 50
+    )
+    private String username;
+
+
+
+    @Column(
+            name = "Email",
+            nullable = false,
+            unique = true,
+            length = 100
+    )
+    private String email;
+
+
+
+    @Column(
+            name = "PasswordHash",
+            nullable = false,
+            length = 255
+    )
+    private String passwordHash;
+
+
+
+    @Column(
+            name = "Active",
+            nullable = false
+    )
+    private boolean active = false;
+
+
+
+    @Column(
+            name = "CreatedAt",
+            nullable = false,
+            updatable = false
+    )
+    private Timestamp createdAt;
+
+
+
+    @Column(
+            name = "Fullname",
+            length = 100
+    )
+    private String fullname;
+
+
+
+    @Column(
+            name = "Phone",
+            length = 30
+    )
+    private String phone;
+
+
+
+    @Column(
+            name = "Images",
+            length = 500
+    )
+    private String images;
+
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(
+            name = "Role",
+            nullable = false,
+            length = 20
+    )
+    private Role role = Role.CUSTOMER;
+
+
+
+    @PrePersist
+    public void prePersist(){
+
+        if(createdAt == null){
+            createdAt = new Timestamp(
+                    System.currentTimeMillis()
+            );
+        }
+
+        if(role == null){
+            role = Role.CUSTOMER;
+        }
+
+    }
+
+
+
+    public User(){
+
+        this.role = Role.CUSTOMER;
+
+    }
+
+
+
+    public User(
+            String username,
+            String email,
+            String passwordHash
+    ){
+
+        this.username = username;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.active = false;
+        this.role = Role.CUSTOMER;
+
+    }
+
+
+
+    public int getId(){
+        return id;
+    }
+
+
+    public void setId(int id){
+        this.id = id;
+    }
+
+
+
+    public String getUsername(){
+        return username;
+    }
+
+
+    public void setUsername(String username){
+        this.username = username;
+    }
+
+
+
+    public String getEmail(){
+        return email;
+    }
+
+
+    public void setEmail(String email){
+        this.email = email;
+    }
+
+
+
+    public String getPasswordHash(){
+        return passwordHash;
+    }
+
+
+    public void setPasswordHash(String passwordHash){
+        this.passwordHash = passwordHash;
+    }
+
+
+
+    public boolean isActive(){
+        return active;
+    }
+
+
+    public void setActive(boolean active){
+        this.active = active;
+    }
+
+
+
+    public Timestamp getCreatedAt(){
+        return createdAt;
+    }
+
+
+    public void setCreatedAt(Timestamp createdAt){
+        this.createdAt = createdAt;
+    }
+
+
+
+    public String getFullname(){
+        return fullname;
+    }
+
+
+    public void setFullname(String fullname){
+        this.fullname = fullname;
+    }
+
+
+
+    public String getPhone(){
+        return phone;
+    }
+
+
+    public void setPhone(String phone){
+        this.phone = phone;
+    }
+
+
+
+    public String getImages(){
+        return images;
+    }
+
+
+    public void setImages(String images){
+        this.images = images;
+    }
+
+
+
+    public Role getRole(){
+        return role;
+    }
+
+
+    public void setRole(Role role){
+        this.role = role;
+    }
+
+}

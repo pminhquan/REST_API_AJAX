@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="https://jakarta.ee/xml/ns/jakartaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-jsptaglibrary_3_0.xsd"
+        version="3.0">
+    <tlib-version>3.0</tlib-version>
+    <short-name>sitemesh</short-name>
+    <uri>http://www.sitemesh.org/sitemesh3</uri>
+    <tag>
+        <description>Outputs SiteMesh write placeholder tag</description>
+        <name>write</name>
+        <tag-class>com.hcmute.springboot.taglib.SiteMeshWriteTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>property</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+</taglib>
