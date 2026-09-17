@@ -78,6 +78,38 @@ public class ProductController {
         return "product-list";
     }
 
+    @GetMapping("/products/ajax")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public org.springframework.http.ResponseEntity<String> showAjaxProductPage(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws java.io.IOException {
+        String contextPath = request.getContextPath() != null ? request.getContextPath() : "";
+
+        jakarta.servlet.http.HttpSession session = request.getSession(true);
+        String token = (String) session.getAttribute(com.hcmute.springboot.config.CsrfInterceptor.CSRF_SESSION_ATTR);
+        if (token == null || token.isBlank()) {
+            token = java.util.UUID.randomUUID().toString();
+            session.setAttribute(com.hcmute.springboot.config.CsrfInterceptor.CSRF_SESSION_ATTR, token);
+        }
+        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("XSRF-TOKEN", token);
+        cookie.setPath(contextPath.isEmpty() ? "/" : contextPath);
+        cookie.setHttpOnly(false);
+        response.addCookie(cookie);
+
+        org.springframework.core.io.ClassPathResource resource =
+                new org.springframework.core.io.ClassPathResource("templates/products-ajax.html");
+        String html;
+        try (InputStream inputStream = resource.getInputStream()) {
+            html = new String(inputStream.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+        }
+        html = html.replace("{{CSRF_TOKEN}}", token)
+                .replace("{{CONTEXT_PATH}}", contextPath);
+        return org.springframework.http.ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.TEXT_HTML)
+                .body(html);
+    }
+
     @GetMapping("/products/detail")
     public String showDetail(@RequestParam(value = "id", required = false) String idStr, Model model, HttpServletResponse response) {
         if (idStr == null || idStr.trim().isEmpty()) {

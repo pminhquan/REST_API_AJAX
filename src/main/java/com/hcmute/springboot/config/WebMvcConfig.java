@@ -43,7 +43,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(csrfInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/assets/**", "/uploads/**");
+                .excludePathPatterns(
+                        "/assets/**",
+                        "/uploads/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/v3/api-docs/**"
+                );
 
         registry.addInterceptor(authenticationInterceptor)
                 .addPathPatterns(
