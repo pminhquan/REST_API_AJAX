@@ -79,6 +79,35 @@ public class CategoryController {
         return "category-add";
     }
 
+    @GetMapping({"/categories/ajax", "/categories-ajax"})
+    @org.springframework.web.bind.annotation.ResponseBody
+    public org.springframework.http.ResponseEntity<String> showAjaxCategoryPage(
+            HttpServletRequest request,
+            jakarta.servlet.http.HttpServletResponse response
+    ) throws java.io.IOException {
+        jakarta.servlet.http.HttpSession session = request.getSession(true);
+        String token = (String) session.getAttribute(com.hcmute.springboot.config.CsrfInterceptor.CSRF_SESSION_ATTR);
+        if (token == null || token.isBlank()) {
+            token = java.util.UUID.randomUUID().toString();
+            session.setAttribute(com.hcmute.springboot.config.CsrfInterceptor.CSRF_SESSION_ATTR, token);
+        }
+        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("XSRF-TOKEN", token);
+        cookie.setPath("/");
+        cookie.setHttpOnly(false);
+        response.addCookie(cookie);
+
+        org.springframework.core.io.ClassPathResource resource =
+                new org.springframework.core.io.ClassPathResource("templates/categories-ajax.html");
+        String html;
+        try (InputStream inputStream = resource.getInputStream()) {
+            html = new String(inputStream.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+        }
+        html = html.replace("{{CSRF_TOKEN}}", token);
+        return org.springframework.http.ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.TEXT_HTML)
+                .body(html);
+    }
+
     @GetMapping("/categories/edit")
     public String showEditPage(@RequestParam(value = "id", required = false) String idStr, Model model) {
         return showEditForm(idStr, model);

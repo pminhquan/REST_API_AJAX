@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{CSRF_TOKEN}}">
+    <title>Category Management (AJAX)</title>
+    <link rel="stylesheet" href="/assets/css/tokens.css">
+    <link rel="stylesheet" href="/assets/css/base.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
+    <style>
+        :root {
+            --font-family-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            --bg-app: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-surface-hover: #f1f5f9;
+            --color-text-primary: #0f172a;
+            --color-text-secondary: #475569;
+            --color-text-muted: #64748b;
+            --color-primary: #4f46e5;
+            --color-primary-hover: #4338ca;
+            --color-primary-light: #e0e7ff;
+            --color-success: #10b981;
+            --color-success-light: #d1fae5;
+            --color-danger: #dc2626;
+            --color-danger-light: #fee2e2;
+            --border-color: #cbd5e1;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: var(--font-family-sans);
+            background-color: var(--bg-app);
+            color: var(--color-text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+
+        .navbar {
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-links a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            margin-left: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .navbar-links a:hover {
+            color: var(--color-primary);
+        }
+
+        .container {
+            max-width: 1140px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .page-header p {
+            color: var(--color-text-muted);
+            margin: 0;
+        }
+
+        .card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .form-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+        }
+
+        .form-control {
+            font-family: inherit;
+            font-size: 0.95rem;
+            padding: 0.6rem 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background-color: var(--bg-surface);
+            color: var(--color-text-primary);
+            outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+
+        .form-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.55rem 1.15rem;
+            border-radius: var(--radius-md);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--color-primary-hover);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: var(--color-text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background-color: #cbd5e1;
+        }
+
+        .btn-outline-primary {
+            background-color: transparent;
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--color-primary-light);
+        }
+
+        .btn-outline-danger {
+            background-color: transparent;
+            border-color: var(--color-danger);
+            color: var(--color-danger);
+        }
+
+        .btn-outline-danger:hover {
+            background-color: var(--color-danger-light);
+        }
+
+        .btn-sm {
+            padding: 0.35rem 0.65rem;
+            font-size: 0.8rem;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .search-bar input {
+            flex: 1;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--color-text-secondary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        tbody tr:hover {
+            background-color: var(--bg-surface-hover);
+        }
+
+        .category-thumb {
+            width: 44px;
+            height: 44px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background-color: #f1f5f9;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+
+        .badge-active {
+            background-color: var(--color-success-light);
+            color: #065f46;
+        }
+
+        .badge-inactive {
+            background-color: #f1f5f9;
+            color: var(--color-text-muted);
+        }
+
+        .alert {
+            padding: 0.85rem 1.15rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.925rem;
+        }
+
+        .alert-success {
+            background-color: var(--color-success-light);
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-danger {
+            background-color: var(--color-danger-light);
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            line-height: 1;
+            cursor: pointer;
+            color: inherit;
+            opacity: 0.7;
+            padding: 0 0 0 0.5rem;
+        }
+
+        .alert-close:hover {
+            opacity: 1;
+        }
+
+        .d-none {
+            display: none !important;
+        }
+
+        .font-mono {
+            font-family: var(--font-family-mono);
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .text-muted {
+            color: var(--color-text-muted);
+        }
+
+        .text-danger {
+            color: var(--color-danger);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <a href="/categories" class="navbar-brand">
+            <span>&#128218; Category Manager</span>
+            <small style="font-size: 0.75rem; color: var(--color-text-muted); font-weight: normal;">(AJAX)</small>
+        </a>
+        <nav class="navbar-links">
+            <a href="/categories">JSP Categories</a>
+            <a href="/swagger-ui/index.html" target="_blank">Swagger API</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="page-header">
+            <h1>AJAX Category Management</h1>
+            <p>Direct asynchronous CRUD interface powered by REST endpoints <code>/api/categories</code>.</p>
+        </div>
+
+        <div id="alert-container"></div>
+
+        <!-- Create / Update Form Card -->
+        <section class="card">
+            <h2 id="form-title" class="card-title">Add New Category</h2>
+            <form id="category-form" autocomplete="off">
+                <input type="hidden" id="category-id" value="">
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="category-name">Category Name <span class="text-danger">*</span></label>
+                        <input type="text" id="category-name" class="form-control" placeholder="e.g. Smartphones" maxlength="100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category-images">Image URL / Filename</label>
+                        <input type="text" id="category-images" class="form-control" placeholder="e.g. phone.jpg" maxlength="500">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category-status">Status</label>
+                        <select id="category-status" class="form-control">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="btn-submit" class="btn btn-primary">Save Category</button>
+                    <button type="button" id="btn-cancel" class="btn btn-secondary d-none">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Category List Card -->
+        <section class="card">
+            <h2 class="card-title">Category List</h2>
+
+            <form id="search-form" class="search-bar">
+                <input type="text" id="search-input" class="form-control" placeholder="Search categories by name...">
+                <button type="submit" class="btn btn-primary">Search</button>
+                <button type="button" id="btn-clear-search" class="btn btn-secondary">Clear</button>
+            </form>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">ID</th>
+                            <th style="width: 90px;">Image</th>
+                            <th>Name</th>
+                            <th style="width: 120px;">Status</th>
+                            <th style="width: 170px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="category-table-body">
+                        <tr id="empty-state">
+                            <td colspan="5" class="text-center py-4 text-muted">Loading categories...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/category-ajax.js"></script>
+</body>
+</html>
