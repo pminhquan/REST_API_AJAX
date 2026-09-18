@@ -175,7 +175,7 @@
                 : '<span class="badge badge-inactive">Inactive</span>';
 
             const imageHtml = cat.images && cat.images.trim()
-                ? `<img src="${escapeHtml(cat.images.startsWith('http') || cat.images.startsWith('/') ? cat.images : '/uploads/categories/' + cat.images)}" alt="${escapeHtml(cat.categoryname)}" class="category-thumb" onerror="this.src='/assets/images/placeholder.svg';">`
+                ? `<img src="${escapeHtml(cat.images.startsWith('http') || cat.images.startsWith('/') ? cat.images : '/uploads/' + cat.images)}" alt="${escapeHtml(cat.categoryname)}" class="category-thumb" onerror="this.onerror=null;this.src='/assets/images/logo.svg';">`
                 : '<span class="text-muted">No image</span>';
 
             tr.innerHTML = `

@@ -26,8 +26,7 @@ Main features:
 - SQL Server
 - Maven
 - Springdoc OpenAPI 3
-- Thymeleaf
-- JavaScript AJAX
+- HTML and JavaScript (served directly by Spring MVC)
 - Bootstrap
 
 
@@ -79,7 +78,15 @@ src/main/resources
 
 ---
 
-# 5. Database Setup
+# 5. Prerequisites & Database Setup
+
+## Prerequisites
+
+Before running the application, ensure the following prerequisites are installed:
+
+- **Java 21** (JDK 21)
+- **Apache Maven 3.9+**
+- **Microsoft SQL Server**
 
 
 ## Database Information
@@ -97,7 +104,7 @@ jakartaJPA
 ```
 
 
-## Create Database
+## Create Database and Seed Data
 
 Run the SQL script:
 
@@ -105,13 +112,21 @@ Run the SQL script:
 database.sql
 ```
 
+Practical database setup steps:
+
+1. Connect SQL Server Management Studio (SSMS) to your local SQL Server using an account allowed to create databases and tables.
+2. Open `database.sql` and execute the entire script including all `GO` batches.
+3. Ensure TCP/IP is enabled and configured for the application's `localhost:1433` connection (or adjust documented connection in `application.properties` to your actual instance).
+4. Configure a valid SQL login with permissions to `jakartaJPA` before starting the application.
+
+> **Note**: `database.sql` must be run manually via SSMS; it is not executed by us or by the application at startup (`spring.jpa.hibernate.ddl-auto=none`).
 
 The script will:
 
-- Create database `jakartaJPA`
-- Create Category table
-- Create Product table
-- Insert sample data
+- Create database `jakartaJPA` if it does not exist
+- Create tables: `users`, `categories`, `products`, `otp_tokens`
+- Seed default administrator account `test_admin`
+- Seed initial categories and sample products
 
 
 ## Configure Database Connection
@@ -121,7 +136,6 @@ Edit:
 ```
 src/main/resources/application.properties
 ```
-
 
 Example:
 
@@ -135,8 +149,7 @@ spring.datasource.password=123
 spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
 ```
 
-
-Run `database.sql` before starting the application.
+Note: `spring.jpa.hibernate.ddl-auto=none` is used, so run `database.sql` before starting the application.
 
 
 ---
@@ -154,7 +167,7 @@ git clone https://github.com/pminhquan/REST_API_AJAX.git
 ## Go to Project Folder
 
 ```bash
-cd BT07_REST_API_AJAX
+cd REST_API_AJAX
 ```
 
 
@@ -181,7 +194,22 @@ http://localhost:8080
 
 ---
 
-# 7. Swagger API Documentation
+# 7. Authentication & Admin Login
+
+The AJAX management pages (`/categories/ajax` and `/products/ajax`) and admin routes are protected by `AuthenticationInterceptor`. Unauthenticated access redirects to `/login`.
+
+To access administrator features and AJAX CRUD interfaces, log in with the seeded administrator credentials:
+
+- **Login URL**: `http://localhost:8080/login`
+- **Username**: `test_admin` (or Email: `admin@test.com`)
+- **Password**: `password`
+- **Role**: `ADMIN`
+
+The documented default password matches the seeded BCrypt hash, and existing `test_admin` rows are not reset by the script.
+
+---
+
+# 8. Swagger API Documentation
 
 
 After starting the application:
@@ -201,7 +229,7 @@ Swagger provides:
 
 ---
 
-# 8. Category REST API
+# 9. Category REST API
 
 
 Base URL:
@@ -280,7 +308,7 @@ DELETE /api/categories/{id}
 
 ---
 
-# 9. Product REST API
+# 10. Product REST API
 
 
 Base URL:
@@ -352,12 +380,14 @@ DELETE /api/products/{id}
 
 ---
 
-# 10. AJAX CRUD Interface
+# 11. AJAX CRUD Interface
 
 
 The project provides AJAX CRUD pages for Category and Product.
 
 CRUD operations are performed without reloading the entire page.
+
+> **Note**: Both AJAX pages require an active `ADMIN` session. Please log in at `/login` with `test_admin` / `password` before navigating to these URLs.
 
 
 ## Category AJAX
@@ -402,38 +432,28 @@ Functions:
 
 ---
 
-# 11. Testing
+# 12. Testing
 
-
-The project has been tested with:
-
-- Maven build
-- REST API endpoints
-- Swagger API documentation
-- AJAX CRUD functions
-
-
-Test command:
+The automated test suite runs via:
 
 ```bash
 mvn clean test
 ```
 
+This runs 26 standalone Mockito unit tests across `CategoryApiControllerTest` and `ProductApiControllerTest`. Note that `mvn clean test` verifies isolated controller logic with mocked service dependencies; it is not proof that live REST endpoints, Swagger UI, browser AJAX interactions, or SQL Server database integration have passed.
+
 ---
 
-# 12. Notes
+# 13. Notes
 
 
 Before running the application:
 
 
-1. Install Java 21
-
-2. Install SQL Server
-
-3. Execute database.sql
-
-4. Configure application.properties
-
-5. Run Spring Boot application
+1. Install Java 21 (JDK 21) and Apache Maven 3.9+
+2. Install Microsoft SQL Server
+3. Execute `database.sql` to initialize database and seed `test_admin`
+4. Configure `application.properties` with your database credentials
+5. Run Spring Boot application (`mvn spring-boot:run`)
+6. Log in at `http://localhost:8080/login` with `test_admin` / `password` before accessing `/categories/ajax` or `/products/ajax`
 

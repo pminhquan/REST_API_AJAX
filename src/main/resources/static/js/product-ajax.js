@@ -220,7 +220,7 @@
         if (img.startsWith('/')) {
             return `${CONTEXT_PATH}${img}`;
         }
-        return `${CONTEXT_PATH}/uploads/products/${img}`;
+        return `${CONTEXT_PATH}/uploads/${img}`;
     }
 
     function renderProducts(products) {
@@ -247,7 +247,7 @@
 
             const categoryName = prod.category ? prod.category.categoryname : 'N/A';
 
-            const placeholderUrl = `${CONTEXT_PATH}/assets/images/placeholder.svg`;
+            const placeholderUrl = `${CONTEXT_PATH}/assets/images/logo.svg`;
             const imageHtml = prod.images && prod.images.trim()
                 ? `<img src="${escapeHtml(resolveImageUrl(prod.images))}" alt="${escapeHtml(prod.productname)}" class="product-thumb" onerror="this.onerror=null;this.src='${escapeHtml(placeholderUrl)}';">`
                 : '<span class="text-muted">No image</span>';
